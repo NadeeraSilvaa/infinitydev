@@ -23,5 +23,5 @@ export const GlobalStyles = createGlobalStyle`
 export const theme = {
   body: '#FFF',
   text: '#333',
-  primary: '#FF0000',
+  primary: '#FF45',
 };

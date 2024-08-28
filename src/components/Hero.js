@@ -1,9 +1,19 @@
 // src/components/Hero.js
 import React from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import Heroimg from '../images/Hero.jpg';
+
+// Keyframes for the zoom-out animation
+const zoomOut = keyframes`
+  0% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+`;
 
 const HeroSection = styled.section`
   display: flex;
@@ -13,13 +23,26 @@ const HeroSection = styled.section`
   background-image: url(${Heroimg});
   background-size: cover;
   background-position: center;
-  color: #000;
+  color: #fff;
   text-align: center;
+  animation: ${zoomOut} 10s ease-out forwards; /* Apply the zoom-out effect */
 `;
 
 const HeroContent = styled.div`
   max-width: 800px;
   padding: 20px;
+`;
+
+const HeroTitle = styled(motion.h1)`
+  font-family: 'Playfair Display SC', serif;
+  font-size: 4rem;
+  line-height: 1.2;
+  font-weight: 100;
+  margin-top: 80px;
+
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
 `;
 
 const Button = styled(motion.button)`
@@ -40,20 +63,15 @@ const Hero = () => {
   return (
     <HeroSection ref={ref}>
       <HeroContent>
-        <motion.h1
+        <HeroTitle
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : 50 }}
           transition={{ duration: 1 }}
         >
-          Welcome to Infinity Developments
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, x: '-50vw' }}
-          animate={{ opacity: inView ? 1 : 0, x: inView ? 0 : '-50vw' }}
-          transition={{ delay: 0.5, duration: 1, type: 'spring', stiffness: 120 }}
-        >
-          Your trusted partner in real estate development.
-        </motion.p>
+          LUXURY REDEFINED<br />
+          GLOBALLY
+        </HeroTitle>
+        
         <Button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}

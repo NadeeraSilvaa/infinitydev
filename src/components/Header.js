@@ -1,18 +1,23 @@
 // src/components/Header.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { FaBars , FaEnvelope } from 'react-icons/fa';
+import { FaBars, FaEnvelope } from 'react-icons/fa';
 import LogoImage from '../images/logo.png';
 
-const HeaderContainer = styled.header`
+const HeaderContainer = styled(motion.header)`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 50px;
+  padding: 30px;
   background-color: #000;
   color: #fff;
-  position: relative;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
+  transform: translateY(0);
+  transition: transform 0.2s ease;
 
   @media (max-width: 768px) {
     flex-direction: row-reverse;
@@ -49,10 +54,9 @@ const Overlay = styled(motion.div)`
   left: 0;
   width: 100%;
   height: 100%;
-//   background-image: url('https://png.pngtree.com/png-clipart/20210204/ourmid/pngtree-black-and-white-building-city-clipart-background-png-image_2882431.jpg'); /* Add your background image here */
   background-size: cover;
   background-position: center;
-  background-color:#000;
+  background-color: #000;
   color: #fff;
   display: flex;
   justify-content: center;
@@ -74,7 +78,7 @@ const ContactButton = styled(motion.button)`
   font-size: 15px;
   cursor: pointer;
   border: 2px solid #fff;
-  border-radius:20px;
+  border-radius: 20px;
   color: #fff;
   background: none;
   transition: all 0.3s ease;
@@ -105,29 +109,53 @@ const SquareButton = styled(motion.button)`
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isScrollingUp, setIsScrollingUp] = useState(true);
+  const [lastScrollTop, setLastScrollTop] = useState(0);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
 
+  const handleScroll = () => {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    if (scrollTop > lastScrollTop) {
+      // Scrolling down
+      setIsScrollingUp(false);
+    } else {
+      // Scrolling up
+      setIsScrollingUp(true);
+    }
+    setLastScrollTop(scrollTop <= 0 ? 0 : scrollTop); // For mobile or negative scrolling
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollTop]);
+
   return (
     <>
-      <HeaderContainer as={motion.div} initial={{ y: -250 }} animate={{ y: 0 }} transition={{ delay: 0.2, type: 'spring' }}>
+      <HeaderContainer
+        as={motion.header}
+        initial={{ y: -250 }}
+        animate={{ y: isScrollingUp ? 0 : -100 }} // Hide when scrolling down, show when scrolling up
+        transition={{ delay: 0.01, type: 'spring' }}
+      >
         <MenuButton onClick={toggleMenu}>
           <FaBars />
         </MenuButton>
         <Logo>
-        <img src={LogoImage} alt="Infinity Developments Logo" />
+          <img src={LogoImage} alt="Infinity Developments Logo" />
         </Logo>
         <ButtonContainer>
-        <ContactButton whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-          <FaEnvelope style={{ marginRight: '10px' }} />
-          Contact Us
-        </ContactButton>
-        <SquareButton whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }}>
-          +
-        </SquareButton>
-      </ButtonContainer>
+          <ContactButton whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+            <FaEnvelope style={{ marginRight: '10px' }} />
+            Contact Us
+          </ContactButton>
+          <SquareButton whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }}>
+            +
+          </SquareButton>
+        </ButtonContainer>
       </HeaderContainer>
 
       <Overlay
